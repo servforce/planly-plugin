@@ -25,8 +25,10 @@ Planly 规划助理：Skill + 插件自带 Gateway MCP + 宿主 OAuth；在支�
 GitHub 已提供 `v1.3.13` 标签，可使用该版本安装：
 
 ```bash
-codex plugin marketplace add shanhaibuci/planly-plugin --ref v1.3.13
+codex plugin marketplace add servforce/planly-plugin --ref v1.3.13
 ```
+
+2026-11-05 起，当前仓库地址为 `servforce/planly-plugin`；历史 tag 及其内容保持原样。
 
 旧版远端 `v1.3.11` 仍保留「Planly 场景求解」展示名称，不含本次更名和版本同步。在支持 Plugins Directory 的桌面客户端找到 **Planly** 插件并安装，启用插件内 `planly` MCP，在宿主 Authenticate 入口完成 OAuth，然后开启新会话：
 
