@@ -69,7 +69,7 @@ class PluginPackageTest(unittest.TestCase):
         manifest = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text())
         version = (ROOT / "VERSION").read_text().strip()
         self.assertRegex(version, r"^\d+\.\d+\.\d+$")
-        self.assertEqual("1.3.13", version)
+        self.assertEqual("1.3.14", version)
         self.assertEqual(version, manifest["version"])
         self.assertEqual(version, (SKILL / "VERSION").read_text().strip())
         frontmatter = (SKILL / "SKILL.md").read_text().split("---", 2)[1]
@@ -101,11 +101,13 @@ class PluginPackageTest(unittest.TestCase):
             with self.subTest(retired_name=retired_name):
                 self.assertNotIn(retired_name, published_ui)
 
-    def test_installation_instructions_use_current_release(self):
+    def test_installation_distinguishes_local_candidate_from_published_release(self):
         version = (ROOT / "VERSION").read_text().strip()
         readme = (ROOT / "README.md").read_text()
         self.assertIn(f"| Plugin / Skill 版本 | **{version}**", readme)
-        self.assertEqual([f"v{version}"], re.findall(r"--ref (\S+)", readme))
+        self.assertEqual(["v1.3.13"], re.findall(r"--ref (\S+)", readme))
+        self.assertIn(f"本地 `{version}` 候选尚未发布", readme)
+        self.assertIn("codex plugin marketplace add .", readme)
         self.assertIn(f"## {version} 变更", readme)
         release = ROOT / "docs/releases" / f"v{version}.md"
         self.assertTrue(release.is_file(), "Current release notes must exist")
@@ -167,7 +169,7 @@ class PluginPackageTest(unittest.TestCase):
         self.assertFalse((PLUGIN / "assets/OFL-Outfit.txt").exists())
         self.assertFalse((PLUGIN / "assets/OFL-DMSerifDisplay.txt").exists())
 
-    def test_brand_assets_match_approved_ice_blue_baseline(self):
+    def test_brand_assets_match_approved_path_p_baseline(self):
         baseline = json.loads((ROOT / "tests/brand-assets-baseline.json").read_text())
         interface = json.loads((PLUGIN / ".codex-plugin/plugin.json").read_text())["interface"]
         approved_sources = {
@@ -185,6 +187,17 @@ class PluginPackageTest(unittest.TestCase):
                 self.assertEqual(b"IHDR", data[12:16])
                 self.assertEqual(expected["size"], list(struct.unpack(">II", data[16:24])))
                 self.assertEqual(6, data[25], "Brand PNG must retain its RGBA channel")
+
+    def test_skill_icon_declarations_resolve_to_pinned_local_brand(self):
+        metadata = (SKILL / "agents/openai.yaml").read_text()
+        baseline = json.loads((ROOT / "tests/brand-assets-baseline.json").read_text())
+        small = SKILL / "assets/icon.png"
+        self.assertIn('icon_small: "./assets/icon.png"', metadata)
+        self.assertIn('icon_large: "./assets/logo.png"', metadata)
+        self.assertEqual(baseline["composerIcon"]["sha256"], hashlib.sha256(small.read_bytes()).hexdigest())
+        large = (SKILL / "assets/logo.png").read_bytes()
+        self.assertEqual((1024, 1024), struct.unpack(">II", large[16:24]))
+        self.assertEqual(b"\x89PNG\r\n\x1a\n", large[:8])
 
     def test_skill_local_reference_links_resolve_inside_bundle(self):
         for source in SKILL.rglob("*.md"):

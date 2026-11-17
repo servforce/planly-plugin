@@ -6,7 +6,7 @@
       256,
       256
     ],
-    "sha256": "1935b60150d9a3e104c435781ec561b7712f3b3ff1b2bd208326683ae46caf79"
+    "sha256": "8bfdab66398da14adf2d92dd131c7a10ff80f783ed918a328c4dadbc42585494"
   },
   "logo": {
     "path": "./assets/logo.png",
@@ -15,7 +15,7 @@
       1480,
       440
     ],
-    "sha256": "095fd364137b8ea44c75b304856d83c9a40bb33e50697228361529af776d9cf8"
+    "sha256": "5668de2166a10efd7531ef4eb402f6f551b71fb427cb6d2e48fe1517bf79c3e2"
   },
   "logoDark": {
     "path": "./assets/logo-dark.png",
@@ -24,6 +24,6 @@
       1480,
       440
     ],
-    "sha256": "4962f88aef30b871296b36e045b42e577bf66d3da5852b1aedb49d476b62774a"
+    "sha256": "1af65836f88658ee37f87b3051d45ac1de8224aab1255d5dda22d6365c91ec61"
   }
 }

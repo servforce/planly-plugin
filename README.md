@@ -8,13 +8,11 @@ Planly 规划助理：Skill + 插件自带 Gateway MCP + 宿主 OAuth；在支�
 | Skill 标识 | `planly-solver` |
 | 插件内 MCP 名 | `planly`（业务工具仍为 `gateway.*`） |
 | 展示名称 | Planly 规划助理 |
-| Plugin / Skill 版本 | **1.3.13**（源码与 annotated 标签 `v1.3.13` 已推送 GitHub） |
+| Plugin / Skill 版本 | **1.3.14**（本地候选已提交，未推送或打 tag） |
 | Gateway MCP | `https://app.planly.cn/mcp` |
 | OAuth Issuer | `https://auth.planly.cn/oidc`（由 Gateway 发现元数据提供） |
 
-**1.3.13 发布：** 插件、内置 Skill 与 Gateway 源 Skill 版本统一为 `1.3.13`，MCP 入口更新为 `https://app.planly.cn/mcp`。公开 Skill 的 16 个文件逐字节同步；公开 Client ID、回调、`gateway:mcp offline_access`、品牌与求解指导保持不变。源码与 annotated 标签 `v1.3.13` 已按用户后续授权推送 GitHub，标签固定于已验证的 `b43c9db7`；发布状态文档由后续主线提交更新。本次未部署服务或更新用户安装，已发布的 `v1.3.12` 记录保留。
-
-**品牌保持不变：** 沿用 `v1.3.11` 已同步的「01 冰蓝浅底」时空折叠与路径 Logo、Quicksand 字标许可和品牌测试基线。当前升版范围见 [1.3.13 版本说明](docs/releases/v1.3.13.md)。
+**1.3.14 本地候选：** 使用用户指定的 Planly Website 黑色 P 形路径标志，替换 Plugin 的小图标与深浅横排 logo，给内置 Skill 增加包内图标和 UI 引用。Gateway 与 Plugin 的 18 个公开 Skill 文件逐字节同步，业务指导与公开连接配置保持不变。本次品牌源文件和分发资料作本地 Git 提交，未推送、打 tag 或更新用户安装。见 [版本说明](docs/releases/v1.3.14.md)。
 
 **接入与验收：** 双组选项需要配套 Gateway 更新；约束模式映射当前 ImageVersion 的真实公开方案，缺少对应模式时展示实际可用方案，不修改引擎权重。自动化与隔离原生协议测试不代替真实 GPT Desktop 安装、登录、续期和图形渲染验收。详见 [验收清单](docs/acceptance.md)。
 
@@ -22,7 +20,7 @@ Planly 规划助理：Skill + 插件自带 Gateway MCP + 宿主 OAuth；在支�
 
 ## 安装与使用
 
-GitHub 已提供 `v1.3.13` 标签，可使用该版本安装：
+GitHub 现有的已发布版本仍为 `v1.3.13`，以下命令安装该已发布版本；本地 `1.3.14` 候选尚未发布：
 
 ```bash
 codex plugin marketplace add servforce/planly-plugin --ref v1.3.13
@@ -38,7 +36,7 @@ $planly-solver 查看我最近成功的任务，并展示地图和 Gantt
 
 固定旧 tag 的 marketplace 不会因刷新自动切到新 tag；需先更新 Git ref，再更新插件。已有用户级 Gateway 连接和历史插件不自动删除；如出现两套工具，应确认当前插件连接及账号后选择，不混用或静默切换。插件 OAuth 不继承旧远端 App 的授权，可能需要重新登录。
 
-本地开发可在独立测试客户端从本仓库目录添加 marketplace；不要通过修改用户现有配置替代插件安装。CLI/IDE 的纯文本界面不等于支持可视化宿主。
+本地候选可在独立测试客户端从本仓库根目录执行 `codex plugin marketplace add .`，无需远端 tag；不要通过修改用户现有配置替代插件安装。CLI/IDE 的纯文本界面不等于支持可视化宿主。
 
 ### 客户端范围
 
@@ -56,7 +54,7 @@ $planly-solver 查看我最近成功的任务，并展示地图和 Gantt
 
 使用 `type=http`、`url`、`oauth.clientId`、`oauth.callbackUrl`，并由同一公开源生成 **`mcpServers.planly.scopes=["gateway:mcp","offline_access"]`**（与 `oauth` 同级，不是 `oauth.scopes`）。`offline_access` 只用于让授权服务器签发 refresh token，Token 存储、刷新与轮换仍由宿主管理；它不扩大 Gateway API 权限。服务器级 scopes 已通过原生授权请求的隔离验证；目标桌面版本的完整换码与续期仍须实测。resource 继续来自 Gateway Protected Resource Metadata，不伪造第二套资源身份；不能再假定发现文档会自动选择正确权限。[插件 OAuth](https://learn.chatgpt.com/docs/extend/mcp#plugin-provided-mcp-servers)
 
-本版仅更新公开 Gateway 端点，沿用既有公开 OAuth Client ID、回调与 scopes，不重新注册或放宽服务端认证。新版连接通过 Gateway 元数据发现 `https://auth.planly.cn/oidc`，并请求新 resource `https://app.planly.cn/mcp`；旧域协议入口已返回 410，不把跳转或保留旧 Token 当作迁移完成。客户端需更新插件并按宿主流程重新授权；宿主若忽略公开客户端配置、使用不匹配回调、请求错误 scope/resource 或要求 DCR，应停止并检查兼容性，不降级 PAT、放宽校验或添加第二条用户级 MCP。
+当前候选仅更新品牌资源和 Skill 图标，沿用 `1.3.13` 的公开 Gateway 端点、OAuth Client ID、回调与 scopes，不重新注册或放宽服务端认证。新版连接通过 Gateway 元数据发现 `https://auth.planly.cn/oidc`，并请求新 resource `https://app.planly.cn/mcp`；旧域协议入口已返回 410，不把跳转或保留旧 Token 当作迁移完成。客户端需更新插件并按宿主流程重新授权；宿主若忽略公开客户端配置、使用不匹配回调、请求错误 scope/resource 或要求 DCR，应停止并检查兼容性，不降级 PAT、放宽校验或添加第二条用户级 MCP。
 
 用户自行完成登录和同意授权；Token 交换、存储及刷新归宿主管理。包内不含 PAT、Token、Client Secret、业务数据或环境文件，不读取用户 OAuth 凭证缓存。独立 Skill 的用户级自动配置脚本仅用于明确的独立安装，不用于修复插件未加载。
 
@@ -77,7 +75,7 @@ Skill 从 Gateway 的任务展示提示分别获取 `map_display_tool_name`、`g
 
 上述双工具 / 双资源为已冻结的接入契约，不代表 Gateway、引擎或真实宿主已完成迁移。提示缺失或目录未就绪时降级为摘要和网页入口，不回退旧单工具契约，也不把只读调用成功当作 UI 已渲染。
 
-当前 `1.3.13` 的公开 Skill 与 Gateway 同步来源逐字节一致，更新版本声明与公开端点，不改变求解流程。来源提交、文件树指纹与验证边界见 [同步记录](docs/gateway-skill-sync.md)。Plugin 源码和版本标签已推送；用户安装及上游服务部署独立处理，Gateway 应用版本独立管理。
+当前 `1.3.14` 候选的公开 Skill 与 Gateway 本地源逐字节一致，仅更换品牌图标和版本声明。来源指纹与验证边界见 [同步记录](docs/gateway-skill-sync.md)。候选已作本地提交，未推送；用户安装及上游部署独立处理，Gateway 应用版本独立管理。
 
 ## 本地验证
 
@@ -91,6 +89,12 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 公开配置更新后执行 `python3 scripts/build_mcp_config.py`。自动化测试使用临时目录和模拟数据，不连接真实账号、不创建任务、不写用户 Codex 配置。真实宿主 OAuth、MCP Apps、地图网络与展示效果按验收清单独立记录。
 
 设置 `PLANLY_CODEX_BIN` 可额外运行真实 Codex 二进制的隔离协议测试，详见验收清单；默认不自动安装客户端。原生 MCP/OAuth 请求与资源读取通过仍不代表实际桌面 UI 已渲染。
+
+## 1.3.14 变更
+
+- 本地品牌候选采用黑色 P 形路径标志、官方白底平台图标与黑色／反白横排组合。
+- Skill 新增包内小／大图标与 UI 声明，18 个文件与 Gateway 本地源逐字节一致。
+- 本地源码及分发资料已提交，未推送、打 tag 或部署；现有公开安装版本仍为 `v1.3.13`。
 
 ## 1.3.13 变更
 
@@ -200,14 +204,14 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 ## 品牌与许可
 
-`plugins/planly/assets/` 采用 2026-10-13 确认的 Planly「01 冰蓝浅底」时空折叠与路径图标，以及 Quicksand Medium 500 字标。资源从 Gateway 的 `docs/brand-assets/planly/` 逐字节同步，不另行绘制或缩放；保留真实透明 alpha 与原清单路径：
+`plugins/planly/assets/` 采用 2026-11-16 用户指定的 Planly Website 黑色 P 形路径图标，以及既有 Quicksand Medium 500 字标。原生 SVG 来自来源提交 `a13d68f42308f744093f8b181082420f62c3f72d`，运行资产从 Gateway 正式品牌包逐字节复制。平台图标使用官方白底版，浅色横排为黑色透明底、深色横排为白色透明底：
 
 | 插件资源 | 已确认品牌源文件 | 用途 |
 | --- | --- | --- |
-| `icon.png` | `favicon/favicon.png` | 纯图标，256 × 256 |
-| `logo.png` | `screen/logo-horizontal.png` | 浅色背景用深海军蓝字标横排，1480 × 440 |
-| `logo-dark.png` | `screen/logo-horizontal-dark.png` | 深色背景用白色字标横排，1480 × 440 |
+| `icon.png` | `favicon/favicon.png` | 官方白底图标，256 × 256 |
+| `logo.png` | `screen/logo-horizontal.png` | 浅色背景用黑色图形与字标横排，1480 × 440 |
+| `logo-dark.png` | `screen/logo-horizontal-dark.png` | 深色背景用白色图形与字标横排，1480 × 440 |
 
 `tests/brand-assets-baseline.json` 记录源路径、尺寸与 SHA-256，独立仓库测试无需访问 Gateway。横排字标已经转为图形，不加载运行时字体；完整许可从 `source/wordmark/fonts/OFL-Quicksand.txt` 同步到 `assets/OFL-Quicksand.txt`，不再交付未使用的 Outfit 许可，不代表软件或商标采用相同许可。
 
-市场技术标识保留 `personal`，展示名为 `Planly Plugins`，不重建市场身份。品牌资产已随 `v1.3.11` 首次发布，当前 `1.3.13` 升版不改变品牌文件或覆盖既有标签；不会修改远端 App 或 OAuth 登录页的 Logo，客户端需安装包含这些资产的版本。
+市场技术标识保留 `personal`，展示名为 `Planly Plugins`。当前 `1.3.14` 仅为本地品牌候选，历史标签不变；未更新远端 App、OAuth 登录页或已安装客户端。
